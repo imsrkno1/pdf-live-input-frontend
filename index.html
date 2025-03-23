@@ -3,71 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Live Preview Tool</title>
+    <title>Live PDF Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { display: flex; font-family: Arial, sans-serif; padding: 20px; }
-        .container { display: flex; gap: 20px; width: 100%; }
-        .form-section { width: 50%; }
-        .preview-section { width: 50%; }
-        input { width: 100%; padding: 8px; margin: 5px 0; }
-        button { padding: 10px; margin-top: 10px; cursor: pointer; }
-        iframe { width: 100%; height: 500px; border: 1px solid #ccc; }
+        body { font-family: Arial, sans-serif; }
+        .wsp-red { background-color: #D50000; } /* WSP Red */
+        .wsp-border { border-color: #D50000; }
+        .wsp-text { color: #D50000; }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="form-section">
-            <h2>Fill Form</h2>
-            <label>Client Name: <input type="text" id="clientName"></label>
-            <label>Project Title: <input type="text" id="projectTitle"></label>
-            <label>Location: <input type="text" id="location"></label>
-            <label>Client/Owner: <input type="text" id="clientOwner"></label>
-            <label>Project Description: <input type="text" id="projectDescription"></label>
-            <label>Project Cost: <input type="text" id="projectCost"></label>
-            <label>Project Dates: <input type="text" id="projectDates"></label>
-            <label>Highlights: <input type="text" id="highlights"></label>
-            <label>Client Contact: <input type="text" id="clientContact"></label>
-            <button onclick="generatePDF()">Download PDF</button>
+<body class="bg-white flex justify-center items-center min-h-screen p-6">
+
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-5xl border-4 wsp-border">
+        <!-- WSP Logo -->
+        <div class="text-center mb-4">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/WSP_Logo.svg/2560px-WSP_Logo.svg.png" 
+                alt="WSP Logo" class="h-12 mx-auto">
         </div>
-        <div class="preview-section">
-            <h2>PDF Preview</h2>
-            <iframe id="pdfPreview" src=""></iframe>
+
+        <h2 class="text-2xl font-bold text-center wsp-text mb-4">Live PDF Generator</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left: Form Section -->
+            <div>
+                <h3 class="text-lg font-semibold wsp-text mb-2">Fill the Form</h3>
+                <form id="pdfForm" class="space-y-3">
+                    <input type="text" id="clientName" placeholder="Client Name" class="w-full p-2 border rounded wsp-border" required>
+                    <input type="text" id="projectTitle" placeholder="Project Title" class="w-full p-2 border rounded wsp-border" required>
+                    <input type="text" id="location" placeholder="Location" class="w-full p-2 border rounded wsp-border" required>
+                    <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded wsp-border" required></textarea>
+                    <input type="text" id="clientOwner" placeholder="Client/Owner" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="clientContact" placeholder="Client Contact" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="projectCost" placeholder="Project Cost" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="projectDates" placeholder="Project Dates" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="highlights" placeholder="Highlights" class="w-full p-2 border rounded wsp-border">
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="wsp-red text-white px-4 py-2 rounded">Generate PDF</button>
+                        <button type="button" id="resetBtn" class="bg-gray-500 text-white px-4 py-2 rounded">Reset</button>
+                        <button type="button" id="newBtn" class="bg-green-600 text-white px-4 py-2 rounded">New</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right: PDF Preview Section -->
+            <div class="text-center">
+                <h3 class="text-lg font-semibold wsp-text mb-2">Live PDF Preview</h3>
+                <iframe id="pdfPreview" class="w-full h-72 border rounded wsp-border"></iframe>
+                <button id="downloadBtn" class="wsp-red text-white px-4 py-2 mt-3 rounded hidden">Download PDF</button>
+            </div>
         </div>
     </div>
 
     <script>
-        function generatePDF() {
-            const data = {
-                clientName: document.getElementById("clientName").value,
-                projectTitle: document.getElementById("projectTitle").value,
-                location: document.getElementById("location").value,
-                clientOwner: document.getElementById("clientOwner").value,
-                projectDescription: document.getElementById("projectDescription").value,
-                projectCost: document.getElementById("projectCost").value,
-                projectDates: document.getElementById("projectDates").value,
-                highlights: document.getElementById("highlights").value,
-                clientContact: document.getElementById("clientContact").value
+        const form = document.getElementById("pdfForm");
+        const pdfPreview = document.getElementById("pdfPreview");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const newBtn = document.getElementById("newBtn");
+
+        const API_URL = "https://pdf-live-input-backend.onrender.com/generate_pdf"; // Your API URL
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const formData = {
+                "Client Name": document.getElementById("clientName").value,
+                "Project Title": document.getElementById("projectTitle").value,
+                "Location": document.getElementById("location").value,
+                "Project Description": document.getElementById("projectDescription").value,
+                "Client/Owner": document.getElementById("clientOwner").value,
+                "Client Contact": document.getElementById("clientContact").value,
+                "Project Cost": document.getElementById("projectCost").value,
+                "Project Dates": document.getElementById("projectDates").value,
+                "Highlights": document.getElementById("highlights").value
             };
 
-            fetch("https://pdf-live-input-backend.onrender.com/generate_pdf", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.blob())
-            .then(blob => {
-                const url = URL.createObjectURL(blob);
-                document.getElementById("pdfPreview").src = url;
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
 
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "filled_form.pdf";
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            })
-            .catch(error => console.error("Error generating PDF:", error));
-        }
+                if (!response.ok) {
+                    throw new Error("Failed to generate PDF");
+                }
+
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                pdfPreview.src = url;
+                downloadBtn.classList.remove("hidden");
+
+                downloadBtn.onclick = () => {
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "generated.pdf";
+                    a.click();
+                };
+
+            } catch (error) {
+                alert("Error generating PDF: " + error.message);
+            }
+        });
+
+        resetBtn.addEventListener("click", () => {
+            form.reset();
+            pdfPreview.src = "";
+            downloadBtn.classList.add("hidden");
+        });
+
+        newBtn.addEventListener("click", () => {
+            form.reset();
+            pdfPreview.src = "";
+            downloadBtn.classList.add("hidden");
+        });
     </script>
+
 </body>
 </html>
