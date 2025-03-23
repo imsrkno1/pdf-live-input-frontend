@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Live Preview Tool</title>
+    <style>
+        body { display: flex; font-family: Arial, sans-serif; padding: 20px; }
+        .container { display: flex; gap: 20px; width: 100%; }
+        .form-section { width: 50%; }
+        .preview-section { width: 50%; }
+        input { width: 100%; padding: 8px; margin: 5px 0; }
+        button { padding: 10px; margin-top: 10px; cursor: pointer; }
+        iframe { width: 100%; height: 500px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <h2>Fill Form</h2>
+            <label>Client Name: <input type="text" id="clientName"></label>
+            <label>Project Title: <input type="text" id="projectTitle"></label>
+            <label>Location: <input type="text" id="location"></label>
+            <label>Client/Owner: <input type="text" id="clientOwner"></label>
+            <label>Project Description: <input type="text" id="projectDescription"></label>
+            <label>Project Cost: <input type="text" id="projectCost"></label>
+            <label>Project Dates: <input type="text" id="projectDates"></label>
+            <label>Highlights: <input type="text" id="highlights"></label>
+            <label>Client Contact: <input type="text" id="clientContact"></label>
+            <button onclick="generatePDF()">Download PDF</button>
+        </div>
+        <div class="preview-section">
+            <h2>PDF Preview</h2>
+            <iframe id="pdfPreview" src=""></iframe>
+        </div>
+    </div>
+
+    <script>
+        function generatePDF() {
+            const data = {
+                clientName: document.getElementById("clientName").value,
+                projectTitle: document.getElementById("projectTitle").value,
+                location: document.getElementById("location").value,
+                clientOwner: document.getElementById("clientOwner").value,
+                projectDescription: document.getElementById("projectDescription").value,
+                projectCost: document.getElementById("projectCost").value,
+                projectDates: document.getElementById("projectDates").value,
+                highlights: document.getElementById("highlights").value,
+                clientContact: document.getElementById("clientContact").value
+            };
+
+            fetch("https://your-backend-url.com/generate-pdf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                document.getElementById("pdfPreview").src = url;
+
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "filled_form.pdf";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            })
+            .catch(error => console.error("Error generating PDF:", error));
+        }
+    </script>
+</body>
+</html>
