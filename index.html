@@ -24,9 +24,6 @@
             max-width: 900px;
             width: 100%;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         h2 {
@@ -50,7 +47,7 @@
         input, textarea {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
+            margin: 8px 0;
             border: 2px solid #2c5364;
             border-radius: 8px;
             outline: none;
@@ -68,6 +65,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.3s;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -106,8 +104,15 @@
                     <input type="text" id="projectTitle" placeholder="Project Title" required>
                     <input type="text" id="location" placeholder="Location" required>
                     <textarea id="projectDescription" placeholder="Project Description" required></textarea>
-                    
+                    <input type="text" id="clientOwner" placeholder="Client/Owner" required>
+                    <input type="text" id="clientContact" placeholder="Client Contact" required>
+                    <input type="text" id="projectCost" placeholder="Project Cost" required>
+                    <input type="text" id="projectDates" placeholder="Project Dates" required>
+                    <input type="text" id="highlights" placeholder="Highlights" required>
+
                     <button type="submit">Generate PDF</button>
+                    <button type="button" id="resetBtn" class="bg-gray-500">Reset Form</button>
+                    <button type="button" id="newFormBtn" class="bg-green-600">New Form</button>
                 </form>
             </div>
 
@@ -124,6 +129,8 @@
         const form = document.getElementById("pdfForm");
         const pdfPreview = document.getElementById("pdfPreview");
         const downloadBtn = document.getElementById("downloadBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const newFormBtn = document.getElementById("newFormBtn");
 
         const API_URL = "https://pdf-live-input-backend.onrender.com/generate_pdf"; // Your API URL
 
@@ -132,7 +139,12 @@
                 "Client Name": document.getElementById("clientName").value,
                 "Project Title": document.getElementById("projectTitle").value,
                 "Location": document.getElementById("location").value,
-                "Project Description": document.getElementById("projectDescription").value
+                "Project Description": document.getElementById("projectDescription").value,
+                "Client/Owner": document.getElementById("clientOwner").value,
+                "Client Contact": document.getElementById("clientContact").value,
+                "Project Cost": document.getElementById("projectCost").value,
+                "Project Dates": document.getElementById("projectDates").value,
+                "Highlights": document.getElementById("highlights").value
             };
 
             try {
@@ -168,6 +180,20 @@
         form.addEventListener("submit", async (event) => {
             event.preventDefault();
             await updateLivePreview();
+        });
+
+        resetBtn.addEventListener("click", () => {
+            form.reset();
+            pdfPreview.src = "";
+            pdfPreview.classList.add("hidden");
+            downloadBtn.classList.add("hidden");
+        });
+
+        newFormBtn.addEventListener("click", () => {
+            form.reset();
+            pdfPreview.src = "";
+            pdfPreview.classList.add("hidden");
+            downloadBtn.classList.add("hidden");
         });
     </script>
 
