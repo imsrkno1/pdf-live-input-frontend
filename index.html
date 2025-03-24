@@ -3,65 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live PDF Generator</title>
+    <title>PDF Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: Arial, sans-serif; }
-        .wsp-red { background-color: #D50000; } /* WSP Red */
-        .wsp-border { border-color: #D50000; }
-        .wsp-text { color: #D50000; }
-        .hidden { display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h2 {
+            color: #ff4b2b;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ff4b2b;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #ff4b2b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #e63a26;
+        }
+
+        iframe {
+            width: 100%;
+            height: 400px;
+            border-radius: 8px;
+            border: 2px solid #ff4b2b;
+            margin-top: 15px;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
-<body class="bg-white flex justify-center items-center min-h-screen p-6">
+<body>
 
-    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-5xl border-4 wsp-border">
-        <!-- WSP Text -->
-        
-        <h2 class="text-2xl font-bold text-center wsp-text mb-4">Live PDF Generator</h2>
+    <div class="container">
+        <h2>Generate Your PDF</h2>
+        <form id="pdfForm">
+            <input type="text" id="clientName" placeholder="Client Name" required>
+            <input type="text" id="projectTitle" placeholder="Project Title" required>
+            <input type="text" id="location" placeholder="Location" required>
+            <textarea id="projectDescription" placeholder="Project Description" required></textarea>
+            
+            <button type="submit">Generate PDF</button>
+        </form>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Left: Form Section -->
-            <div>
-                <h3 class="text-lg font-semibold wsp-text mb-2">Fill the Form</h3>
-                <form id="pdfForm" class="space-y-3">
-                    <input type="text" id="clientName" placeholder="Client Name" class="w-full p-2 border rounded wsp-border" required>
-                    <input type="text" id="projectTitle" placeholder="Project Title" class="w-full p-2 border rounded wsp-border" required>
-                    <input type="text" id="location" placeholder="Location" class="w-full p-2 border rounded wsp-border" required>
-                    <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded wsp-border" required></textarea>
-                    <input type="text" id="clientOwner" placeholder="Client/Owner" class="w-full p-2 border rounded wsp-border">
-                    <input type="text" id="clientContact" placeholder="Client Contact" class="w-full p-2 border rounded wsp-border">
-                    <input type="text" id="projectCost" placeholder="Project Cost" class="w-full p-2 border rounded wsp-border">
-                    <input type="text" id="projectDates" placeholder="Project Dates" class="w-full p-2 border rounded wsp-border">
-                    <input type="text" id="highlights" placeholder="Highlights" class="w-full p-2 border rounded wsp-border">
-
-                    <div class="flex gap-3">
-                        <button type="submit" class="wsp-red text-white px-4 py-2 rounded">Generate PDF</button>
-                        <button type="button" id="resetBtn" class="bg-gray-500 text-white px-4 py-2 rounded">Reset</button>
-                        <button type="button" id="newBtn" class="bg-green-600 text-white px-4 py-2 rounded">New</button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Right: PDF Preview Section -->
-            <div class="text-center">
-                <h3 class="text-lg font-semibold wsp-text mb-2">Live PDF Preview</h3>
-                <iframe id="pdfPreview" class="w-full h-[500px] border rounded wsp-border"></iframe>
-                <div class="flex gap-3 justify-center mt-3">
-                    <button id="downloadBtn" class="wsp-red text-white px-4 py-2 rounded hidden">Download PDF</button>
-                    <button id="fullscreenBtn" class="bg-blue-600 text-white px-4 py-2 rounded hidden">Full Screen</button>
-                </div>
-            </div>
-        </div>
+        <iframe id="pdfPreview" class="hidden"></iframe>
+        <button id="downloadBtn" class="hidden">Download PDF</button>
     </div>
 
     <script>
         const form = document.getElementById("pdfForm");
         const pdfPreview = document.getElementById("pdfPreview");
         const downloadBtn = document.getElementById("downloadBtn");
-        const resetBtn = document.getElementById("resetBtn");
-        const newBtn = document.getElementById("newBtn");
-        const fullscreenBtn = document.getElementById("fullscreenBtn");
 
         const API_URL = "https://pdf-live-input-backend.onrender.com/generate_pdf"; // Your API URL
 
@@ -72,12 +103,7 @@
                 "Client Name": document.getElementById("clientName").value,
                 "Project Title": document.getElementById("projectTitle").value,
                 "Location": document.getElementById("location").value,
-                "Project Description": document.getElementById("projectDescription").value,
-                "Client/Owner": document.getElementById("clientOwner").value,
-                "Client Contact": document.getElementById("clientContact").value,
-                "Project Cost": document.getElementById("projectCost").value,
-                "Project Dates": document.getElementById("projectDates").value,
-                "Highlights": document.getElementById("highlights").value
+                "Project Description": document.getElementById("projectDescription").value
             };
 
             try {
@@ -94,8 +120,8 @@
                 const blob = await response.blob();
                 const url = URL.createObjectURL(blob);
                 pdfPreview.src = url;
+                pdfPreview.classList.remove("hidden");
                 downloadBtn.classList.remove("hidden");
-                fullscreenBtn.classList.remove("hidden");
 
                 downloadBtn.onclick = () => {
                     const a = document.createElement("a");
@@ -104,27 +130,9 @@
                     a.click();
                 };
 
-                fullscreenBtn.onclick = () => {
-                    window.open(url, "_blank");
-                };
-
             } catch (error) {
                 alert("Error generating PDF: " + error.message);
             }
-        });
-
-        resetBtn.addEventListener("click", () => {
-            form.reset();
-            pdfPreview.src = "";
-            downloadBtn.classList.add("hidden");
-            fullscreenBtn.classList.add("hidden");
-        });
-
-        newBtn.addEventListener("click", () => {
-            form.reset();
-            pdfPreview.src = "";
-            downloadBtn.classList.add("hidden");
-            fullscreenBtn.classList.add("hidden");
         });
     </script>
 
