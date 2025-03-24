@@ -21,9 +21,12 @@
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
+            max-width: 900px;
             width: 100%;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h2 {
@@ -31,6 +34,17 @@
             font-size: 26px;
             font-weight: bold;
             margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .form-section {
+            flex: 1;
         }
 
         input, textarea {
@@ -60,6 +74,13 @@
             background: #1b3b4c;
         }
 
+        .preview-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         iframe {
             width: 100%;
             height: 400px;
@@ -77,17 +98,26 @@
 
     <div class="container">
         <h2>Generate Your PDF</h2>
-        <form id="pdfForm">
-            <input type="text" id="clientName" placeholder="Client Name" required>
-            <input type="text" id="projectTitle" placeholder="Project Title" required>
-            <input type="text" id="location" placeholder="Location" required>
-            <textarea id="projectDescription" placeholder="Project Description" required></textarea>
-            
-            <button type="submit">Generate PDF</button>
-        </form>
+        <div class="form-container">
+            <!-- Form Section -->
+            <div class="form-section">
+                <form id="pdfForm">
+                    <input type="text" id="clientName" placeholder="Client Name" required>
+                    <input type="text" id="projectTitle" placeholder="Project Title" required>
+                    <input type="text" id="location" placeholder="Location" required>
+                    <textarea id="projectDescription" placeholder="Project Description" required></textarea>
+                    
+                    <button type="submit">Generate PDF</button>
+                </form>
+            </div>
 
-        <iframe id="pdfPreview" class="hidden"></iframe>
-        <button id="downloadBtn" class="hidden">Download PDF</button>
+            <!-- Live PDF Preview Section -->
+            <div class="preview-container">
+                <h3 class="text-lg font-semibold text-gray-800">Live Preview</h3>
+                <iframe id="pdfPreview" class="hidden"></iframe>
+                <button id="downloadBtn" class="hidden">Download PDF</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -97,9 +127,7 @@
 
         const API_URL = "https://pdf-live-input-backend.onrender.com/generate_pdf"; // Your API URL
 
-        form.addEventListener("submit", async (event) => {
-            event.preventDefault();
-
+        async function updateLivePreview() {
             const formData = {
                 "Client Name": document.getElementById("clientName").value,
                 "Project Title": document.getElementById("projectTitle").value,
@@ -132,8 +160,14 @@
                 };
 
             } catch (error) {
-                alert("Error generating PDF: " + error.message);
+                console.error("Error generating PDF:", error.message);
             }
+        }
+
+        form.addEventListener("input", updateLivePreview);
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            await updateLivePreview();
         });
     </script>
 
