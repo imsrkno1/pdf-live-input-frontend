@@ -3,140 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Generator</title>
+    <title>Live PDF Generator</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #141E30, #243B55);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            max-width: 1000px;
-            width: 100%;
-            text-align: center;
-            backdrop-filter: blur(12px);
-            border: 3px solid rgba(255, 255, 255, 0.3);
-        }
-
-        h2 {
-            color: white;
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        .form-container {
-            display: flex;
-            flex-direction: row;
-            gap: 30px;
-            width: 100%;
-        }
-
-        .form-section {
-            flex: 1;
-            text-align: left;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 15px;
-            margin: 12px 0;
-            border: 3px solid rgba(255, 255, 255, 0.5);
-            border-radius: 10px;
-            outline: none;
-            font-size: 18px;
-            background: rgba(255, 255, 255, 0.25);
-            color: white;
-            backdrop-filter: blur(10px);
-            font-weight: bold;
-        }
-
-        input::placeholder, textarea::placeholder {
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: bold;
-        }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 12px;
-            text-transform: uppercase;
-        }
-
-        button:hover {
-            background: rgba(255, 255, 255, 0.6);
-            color: #141E30;
-        }
-
-        .preview-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        iframe {
-            width: 100%;
-            height: 500px;
-            border-radius: 10px;
-            border: 3px solid rgba(255, 255, 255, 0.4);
-            margin-top: 20px;
-            background: white;
-        }
-
-        .hidden {
-            display: none;
-        }
+        body { font-family: Arial, sans-serif; }
+        .wsp-red { background-color: #D50000; } /* WSP Red */
+        .wsp-border { border-color: #D50000; }
+        .wsp-text { color: #D50000; }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
+<body class="bg-white flex justify-center items-center min-h-screen p-6">
 
-    <div class="container">
-        <h2>Generate Your PDF</h2>
-        <div class="form-container">
-            <!-- Form Section -->
-            <div class="form-section">
-                <form id="pdfForm">
-                    <input type="text" id="clientName" placeholder="Client Name" required>
-                    <input type="text" id="projectTitle" placeholder="Project Title" required>
-                    <input type="text" id="location" placeholder="Location" required>
-                    <textarea id="projectDescription" placeholder="Project Description" required></textarea>
-                    <input type="text" id="clientOwner" placeholder="Client/Owner" required>
-                    <input type="text" id="clientContact" placeholder="Client Contact" required>
-                    <input type="text" id="projectCost" placeholder="Project Cost" required>
-                    <input type="text" id="projectDates" placeholder="Project Dates" required>
-                    <input type="text" id="highlights" placeholder="Highlights" required>
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-5xl border-4 wsp-border">
+        <!-- WSP Text -->
+        <div class="text-center mb-4">
+            <h1 class="text-4xl font-bold wsp-text">WSP</h1>
+        </div>
 
-                    <button type="submit">Generate PDF</button>
-                    <button type="button" id="resetBtn">Reset Form</button>
-                    <button type="button" id="newFormBtn">New Form</button>
+        <h2 class="text-2xl font-bold text-center wsp-text mb-4">Live PDF Generator</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left: Form Section -->
+            <div>
+                <h3 class="text-lg font-semibold wsp-text mb-2">Fill the Form</h3>
+                <form id="pdfForm" class="space-y-3">
+                    <input type="text" id="clientName" placeholder="Client Name" class="w-full p-2 border rounded wsp-border" required>
+                    <input type="text" id="projectTitle" placeholder="Project Title" class="w-full p-2 border rounded wsp-border" required>
+                    <input type="text" id="location" placeholder="Location" class="w-full p-2 border rounded wsp-border" required>
+                    <textarea id="projectDescription" placeholder="Project Description" class="w-full p-2 border rounded wsp-border" required></textarea>
+                    <input type="text" id="clientOwner" placeholder="Client/Owner" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="clientContact" placeholder="Client Contact" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="projectCost" placeholder="Project Cost" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="projectDates" placeholder="Project Dates" class="w-full p-2 border rounded wsp-border">
+                    <input type="text" id="highlights" placeholder="Highlights" class="w-full p-2 border rounded wsp-border">
+
+                    <div class="flex gap-3">
+                        <button type="submit" class="wsp-red text-white px-4 py-2 rounded">Generate PDF</button>
+                        <button type="button" id="resetBtn" class="bg-gray-500 text-white px-4 py-2 rounded">Reset</button>
+                        <button type="button" id="newBtn" class="bg-green-600 text-white px-4 py-2 rounded">New</button>
+                    </div>
                 </form>
             </div>
 
-            <!-- Live PDF Preview Section -->
-            <div class="preview-container">
-                <h3 class="text-xl font-bold text-white">Live Preview</h3>
-                <iframe id="pdfPreview" class="hidden"></iframe>
-                <button id="downloadBtn" class="hidden">Download PDF</button>
+            <!-- Right: PDF Preview Section -->
+            <div class="text-center">
+                <h3 class="text-lg font-semibold wsp-text mb-2">Live PDF Preview</h3>
+                <iframe id="pdfPreview" class="w-full h-[500px] border rounded wsp-border hidden"></iframe>
+                <div class="flex gap-3 justify-center mt-3">
+                    <button id="downloadBtn" class="wsp-red text-white px-4 py-2 rounded hidden">Download PDF</button>
+                    <button id="fullscreenBtn" class="bg-blue-600 text-white px-4 py-2 rounded hidden">Full Screen</button>
+                </div>
             </div>
         </div>
     </div>
@@ -145,8 +63,9 @@
         const form = document.getElementById("pdfForm");
         const pdfPreview = document.getElementById("pdfPreview");
         const downloadBtn = document.getElementById("downloadBtn");
+        const fullscreenBtn = document.getElementById("fullscreenBtn");
         const resetBtn = document.getElementById("resetBtn");
-        const newFormBtn = document.getElementById("newFormBtn");
+        const newBtn = document.getElementById("newBtn");
 
         const API_URL = "https://pdf-live-input-backend.onrender.com/generate_pdf"; // Your API URL
 
@@ -179,12 +98,17 @@
                 pdfPreview.src = url;
                 pdfPreview.classList.remove("hidden");
                 downloadBtn.classList.remove("hidden");
+                fullscreenBtn.classList.remove("hidden");
 
                 downloadBtn.onclick = () => {
                     const a = document.createElement("a");
                     a.href = url;
                     a.download = "generated.pdf";
                     a.click();
+                };
+
+                fullscreenBtn.onclick = () => {
+                    window.open(url, "_blank");
                 };
 
             } catch (error) {
@@ -203,13 +127,15 @@
             pdfPreview.src = "";
             pdfPreview.classList.add("hidden");
             downloadBtn.classList.add("hidden");
+            fullscreenBtn.classList.add("hidden");
         });
 
-        newFormBtn.addEventListener("click", () => {
+        newBtn.addEventListener("click", () => {
             form.reset();
             pdfPreview.src = "";
             pdfPreview.classList.add("hidden");
             downloadBtn.classList.add("hidden");
+            fullscreenBtn.classList.add("hidden");
         });
     </script>
 
